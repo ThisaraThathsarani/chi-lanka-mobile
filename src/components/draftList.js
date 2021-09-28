@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
-import { getAllDrafts } from "../services/draftsService";
+import { Animated, SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import { getAllDrafts, deleteDraftPermenantly } from "../services/draftsService";
+
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
 
 
 const wait = (timeout) => {
@@ -9,8 +12,9 @@ const wait = (timeout) => {
 
 function draftList() {
 
-    const [draftList, setdraftList] = useState("");
+    const [draftList, setdraftList] = useState([]);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [id, setId] = useState("");
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -25,11 +29,12 @@ function draftList() {
         })
     }, []);
 
-
     useEffect(() => {
 
-        getAllDrafts().then((res) => {
 
+
+        getAllDrafts().then((res) => {
+            console.log("listtttttttttt", res);
             if (res.ok) {
                 setdraftList(res.data);
             }
@@ -37,45 +42,92 @@ function draftList() {
             alert("error", err);
         })
 
-    }, [])
+        console.log("iddddddd", id);
+
+    }, [id])
 
 
+    const LeftSwipeActions = () => {
+        // deleteDraftPermenantly(id);
+        console.log("updateeeeeeeeeeee")
+        return (
+            <View
+                style={{ flex: 1, backgroundColor: '#FF3131', justifyContent: 'center' }}
+            >
 
-
-    // const DATA = [
-    //     {
-    //         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    //         title: 'First Item',
-    //     },
-    //     {
-    //         id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    //         title: 'Second Item',
-    //     },
-    //     {
-    //         id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    //         title: 'Third Item',
-    //     },
-    // ];
-
-    const Item = ({ title, draftid }) => (
-        <TouchableOpacity>
-            <View style={[styles.itemS, styles.elevation]}>
-                <Text style={styles.titleID}>{draftid}</Text>
-                <Text style={styles.titleData}>{title}</Text>
+                <TouchableOpacity onPress={() => { deleteDraftPermenantly(id) }}>
+                    <Text
+                        style={{
+                            color: 'white',
+                            paddingHorizontal: 10,
+                            fontWeight: '600',
+                            paddingHorizontal: 30,
+                            paddingVertical: 20,
+                            fontSize: 18,
+                            marginLeft: 150
+                        }}
+                    >
+                        Delete
+                    </Text>
+                </TouchableOpacity>
             </View>
-        </TouchableOpacity>
-    );
+        );
+    };
+
+    const RightSwipeActions = () => {
+        // console.log("updateeeeeeeeeeee")
+        return (
+            <View
+                style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}
+            >
+                <Text
+                    style={{
+                        color: 'white',
+                        paddingHorizontal: 10,
+                        fontWeight: '600',
+                        paddingHorizontal: 30,
+                        paddingVertical: 20,
+                        fontSize: 18,
+                        marginLeft: 150
+                    }}
+                >
+                    Update
+                </Text>
+            </View>
+        );
+    };
+
+    function deleteDraft() {
+        console.log("deleteeeeeeee")
+        // console.log("delete dataa", data)
+    }
 
 
-    const renderItem = ({ item }) => (
 
-        <Item title={item.title} draftid={item.draftid} />
-    );
+    const List = () => {
+        return draftList.map((element) => {
+            return (
+                <View key={element.draftid}>
+                    <Swipeable
+                        renderLeftActions={LeftSwipeActions}
+                        // openLeft={setId(element.draftid)}
+                        // leftThreshold={'50%'} rightThreshold={'50%'}
+                        renderRightActions={RightSwipeActions}>
+                        <TouchableOpacity onPress={() => { console.log("clicked data", setId(element.draftid)) }}>
+                            <View style={[styles.itemList, styles.elevation]}>
+                                <Text style={styles.titleID}>{element.draftid}</Text>
+                                <Text style={styles.titleData}>{element.title}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </Swipeable>
+                </View >
+            )
+        })
+    }
 
     return (
 
         <ScrollView
-
             refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
@@ -84,13 +136,9 @@ function draftList() {
             }
         >
 
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, paddingTop: 20 }}>
 
-                <FlatList
-                    data={draftList}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />
+                <View>{List()}</View>
 
             </View>
         </ScrollView>
@@ -116,7 +164,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
 
-    itemS: {
+    itemList: {
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
