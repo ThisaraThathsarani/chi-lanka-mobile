@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import placeAnOrder from './src/components/placeAnOrder';
 import draftList from './src/components/draftList';
+import updateDraft from './src/components/updateDraft';
 
 const defaultTheme = {
   ...DefaultTheme,

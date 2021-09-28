@@ -1,185 +1,8 @@
+import React from 'react'
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TextInput, ImageBackground, ScrollView, TouchableHighlight, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 
-import { addOrder } from "../services/purchaseOrderService";
-import { addOrderItems } from "../services/purchaseOrderItemsService";
-import { addRequisition } from "../services/requisitionService";
-import { createPayment } from "../services/paymentService";
-import { addNewDraft } from "../services/draftsService";
-
-function placeAnOrder({ navigation }) {
-    const [orderid, setOrderId] = useState("");
-    const [orderdate, setOrderdate] = useState("");
-    const [suppliername, setSuppliername] = useState("");
-    const [title, setTitle] = useState("");
-    const [shipto, setShipTo] = useState("");
-    const [total, setTotal] = useState("");
-    const [comment, setComment] = useState("");
-    const [item01, setItem01] = useState("");
-    const [item02, setItem02] = useState("");
-    const [item03, setItem03] = useState("");
-    const [itemName01, setItemName01] = useState("");
-    const [itemName02, setItemName02] = useState("");
-    const [itemName03, setItemName03] = useState("");
-    const [qty01, setQty01] = useState("");
-    const [qty02, setQty02] = useState("");
-    const [qty03, setQty03] = useState("");
-    const [amount1, setAmount01] = useState(100);
-    const [amount2, setAmount02] = useState(100);
-    const [amount3, setAmount03] = useState(100);
-
-
-    function sendData(e) {
-        // e.preventDefault();
-        // Alert.alert("function called")
-        const newOrder = {
-            orderid,
-            orderdate,
-            suppliername,
-            title,
-            shipto,
-            status: "Pending",
-            total,
-            comment,
-        };
-
-
-        const newOrderItems = {
-            orderid,
-            item01,
-            item02: "",
-            item03: "",
-            itemName01,
-            itemName02: "",
-            itemName03: "",
-            qty01,
-            qty02: 5,
-            qty03: 5,
-            amount1: 100,
-            amount2: 100,
-            amount3: 100
-        }
-
-        const newPayment = {
-            orderid,
-            total,
-            comment,
-            orderdate
-        }
-
-        if (total > 100000) {
-            Alert.alert("Order Amount Exceeds 100,000 Do you want to submit a purchase Requisition? ").then((result) => {
-
-                if (result.isConfirmed) {
-
-                    var requisitionid = orderid;
-                    var amount01 = amount1;
-                    var amount02 = amount2;
-                    var amount03 = amount3;
-                    status = "Waiting for Approval";
-
-                    alert(amount01 + amount02 + amount03)
-                    const newRequisition = {
-                        requisitionid, orderdate, suppliername, title, shipto, status, total, comment, item01, item02, item03, itemName01, itemName02, itemName03,
-                        qty01, qty02, qty03, amount01, amount02, amount03
-                    }
-
-                    addRequisition(newRequisition).then((response) => {
-
-                        if (response.ok) {
-                            Alert.alert("Success!")
-
-                        }
-                        else {
-                            Alert.alert("Oops! Something went wrong")
-                        }
-                    })
-
-
-                }
-
-            })
-
-        } else {
-
-            addOrder(newOrder).then((response) => {
-
-                if (response.ok) {
-
-                    addOrderItems(newOrderItems).then(() => {
-
-                        if (response.ok) {
-
-                            createPayment(newPayment).then(() => {
-
-                                if (response.ok) {
-                                    Alert.alert("Success!"
-                                    )
-                                } else {
-                                    Alert.alert("Oops! Something went wrong")
-
-                                }
-
-                            })
-
-                        }
-                        else {
-                            Alert.alert("Oops! Something went wrong"
-                            )
-                        }
-                    })
-
-                } else {
-                    Alert.alert("Oops! Something went wrong")
-                }
-            }
-            )
-        }
-
-
-    }
-
-
-    const saveAsDraft = () => {
-        const newDraft = {
-            draftid: orderid,
-            draftdate: orderdate,
-            modifydate: new Date().toISOString().slice(0, 10),
-            suppliername: suppliername,
-            title: title,
-            shipto: shipto,
-            status: "Waiting for Approval",
-            total: total,
-            comment: comment,
-            item01: item01,
-            item02: item02,
-            item03: item03,
-            itemName01: itemName01,
-            itemName02: itemName02,
-            itemName03: itemName03,
-            qty01: qty01,
-            qty02: qty02,
-            qty03: qty03,
-            amount01: amount1,
-            amount02: amount2,
-            amount03: amount3
-        }
-
-        addNewDraft(newDraft).then((res) => {
-            Alert.alert("draft saved")
-            navigation.navigate('draftList');
-        }).catch((err) => {
-            Alert.alert("draft NOT saved", err);
-        })
-    }
-
-
-
-    // useEffect(() => {
-    //   console.log(supplier);
-    // }, [supplier])
+function updateDraft() {
     return (
         <SafeAreaView style={styles.container}>
 
@@ -298,47 +121,37 @@ function placeAnOrder({ navigation }) {
     )
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        paddingBottom: 20
+        marginTop: StatusBar.currentHeight || 0,
     },
-    input: {
-        borderWidth: 1,
+    item: {
+        backgroundColor: '#f9c2ff',
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+    },
+    title: {
+        fontSize: 32,
+    },
+
+    itemS: {
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        backgroundColor: "white",
         borderRadius: 10,
-        borderColor: "black",
-        width: 350,
-        padding: 10,
-        color: 'black',
-        fontWeight: 'bold',
-        fontSize: 16
-    },
-    text: {
-        color: 'black',
-        fontSize: 18
-    },
-    btnSubmit: {
-        width: 350,
-        height: 50,
-        backgroundColor: '#1FC190',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 20
+
+        marginLeft: 17,
+        borderColor: "#D8D8D8",
+        borderWidth: 0.5
 
     },
-    btnDraft: {
-        width: 350,
-        height: 50,
-        backgroundColor: '#FFCA00',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 20
-
-    }
+    elevation: {
+        shadowColor: "#52006A",
+        elevation: 5,
+    },
 });
-
-export default placeAnOrder
+export default updateDraft
