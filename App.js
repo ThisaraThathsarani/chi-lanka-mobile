@@ -5,7 +5,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import placeAnOrder from './src/components/placeAnOrder';
 import draftList from './src/components/draftList';
-import updateDraft from './src/components/updateDraft';
+
+
+
 
 const defaultTheme = {
   ...DefaultTheme,
@@ -20,6 +22,7 @@ const defaultTheme = {
 };
 
 const Tab = createBottomTabNavigator();
+
 
 export default function App() {
   return (
@@ -48,7 +51,10 @@ export default function App() {
       >
         <Tab.Screen name="placeOrder" component={placeAnOrder} options={{ headerTitleAlign: 'center', title: 'Place an Order' }} />
         <Tab.Screen name="draftList" component={draftList} options={{ headerTitleAlign: 'center', title: 'Drafts List' }} />
+
       </Tab.Navigator>
+
+
     </NavigationContainer>
   );
 }

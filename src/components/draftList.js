@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react'
+<<<<<<< HEAD
 import { Animated, SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
 import { getAllDrafts, deleteDraftPermenantly } from "../services/draftsService";
 
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { RectButton } from 'react-native-gesture-handler';
+=======
+import { Modal, SafeAreaView, Pressable, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import { getAllDrafts } from "../services/draftsService";
+import updateDraft from './updateDraft';
+
+>>>>>>> 74873f2aa318458d137f5a478f91274e7f15a962
 
 
 const wait = (timeout) => {
@@ -11,6 +18,7 @@ const wait = (timeout) => {
 }
 
 function draftList() {
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [draftList, setdraftList] = useState([]);
     const [refreshing, setRefreshing] = React.useState(false);
@@ -125,7 +133,13 @@ function draftList() {
         })
     }
 
+
     return (
+
+
+
+
+
 
         <ScrollView
             refreshControl={
@@ -142,6 +156,9 @@ function draftList() {
 
             </View>
         </ScrollView>
+
+
+
     )
 }
 
@@ -180,6 +197,54 @@ const styles = StyleSheet.create({
         shadowColor: "#52006A",
         elevation: 5,
     },
+
+
+
+
+
+
+    //modal style
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    buttonOpen: {
+        backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    }
 });
 
 export default draftList
