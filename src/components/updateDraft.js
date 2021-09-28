@@ -11,14 +11,16 @@ import { addOrder, lastAddedOrder } from "../services/purchaseOrderService";
 import { addOrderItems } from "../services/purchaseOrderItemsService";
 import { addRequisition } from "../services/requisitionService";
 import { createPayment } from "../services/paymentService";
-import { addNewDraft } from "../services/draftsService";
+import { updateDraft } from "../services/draftsService";
 import { getItemDetails } from "../services/itemServices";
 
 
 
-function UpdateDraft() {
+function UpdateDraft(data) {
 
     const [modalVisible, setModalVisible] = useState(false);
+
+
 
 
 
@@ -27,7 +29,7 @@ function UpdateDraft() {
     const [suppliername, setSuppliername] = useState("");
     const [title, setTitle] = useState("");
     const [shipto, setShipTo] = useState("");
-    const [total, setTotal] = useState(500);
+    const [total, setTotal] = useState(0);
     const [comment, setComment] = useState("");
     const [item01, setItem01] = useState("");
     const [item02, setItem02] = useState("");
@@ -42,6 +44,33 @@ function UpdateDraft() {
     const [amount2, setAmount02] = useState("");
     const [amount3, setAmount03] = useState("");
 
+
+
+    useEffect(() => {
+        console.log("modal data comming", data.data)
+
+        setOrderId(data.data.draftid)
+        setOrderdate(data.data.draftdate)
+        setSuppliername(data.data.suppliername)
+        setTitle(data.data.title)
+        setShipTo(data.data.shipto)
+        setTotal(data.data.total)
+        setComment(data.data.comment)
+        setItem01(data.data.item01)
+        setItem02(data.data.item02)
+        setItem03(data.data.item03)
+        setItemName01(data.data.itemName01)
+        setItemName02(data.data.itemName02)
+        setItemName03(data.data.itemName03)
+        setQty01(data.data.qty01)
+        setQty02(data.data.qty02)
+        setQty03(data.data.qty03)
+        setAmount01(data.data.amount1)
+        setAmount02(data.data.amount2)
+        setAmount03(data.data.amount3)
+
+
+    }, [data.data])
 
 
     function sendData(e) {
@@ -156,6 +185,61 @@ function UpdateDraft() {
 
 
 
+    const saveAsDraft = () => {
+        const newDraft = {
+            draftid: orderid,
+            draftdate: new Date(orderdate).toISOString().slice(0, 10),
+            modifydate: new Date().toISOString().slice(0, 10),
+            suppliername: suppliername,
+            title: title,
+            shipto: shipto,
+            status: "Waiting for Approval",
+            total: total,
+            comment: comment,
+            item01: item01,
+            item02: item02,
+            item03: item03,
+            itemName01: itemName01,
+            itemName02: itemName02,
+            itemName03: itemName03,
+            qty01: qty01,
+            qty02: qty02,
+            qty03: qty03,
+            amount01: amount1,
+            amount02: amount2,
+            amount03: amount3
+        }
+
+        updateDraft(orderid, newDraft).then((res) => {
+            if (res.ok) {
+                const message = "Draft Saved Succesfully"
+                Swal.fire({
+                    title: "Success! ",
+                    text: `${message}`,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1000
+
+                }).then(() => {
+                    window.location.reload();
+                })
+
+
+            } else {
+                Swal.fire({
+                    title: "Oops! ",
+                    text: `${res.err}`,
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1500
+
+                })
+            }
+        })
+    }
+
+
+
 
     return (
 
@@ -203,18 +287,18 @@ function UpdateDraft() {
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>PO Title :</Text>
-                        <TextInput style={styles.input} placeholder="po title" onChangeText={(e) => { setTitle(e) }}></TextInput>
+                        <TextInput style={styles.input} value={title} placeholder="po title" onChangeText={(e) => { setTitle(e) }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
 
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Ship to :</Text>
-                        <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setShipTo(e) }}></TextInput>
+                        <TextInput style={styles.input} value={shipto} placeholder="Ship to" onChangeText={(e) => { setShipTo(e) }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item 01 :</Text>
-                        <TextInput style={styles.input} placeholder="IT001" onChangeText={(e) => { setItem01(e); getDetails1(e); }}></TextInput>
+                        <TextInput style={styles.input} value={item01} placeholder="IT001" onChangeText={(e) => { setItem01(e); getDetails1(e); }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
 
@@ -225,39 +309,39 @@ function UpdateDraft() {
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item qty :</Text>
-                        <TextInput style={styles.input} keyboardType="numeric" placeholder="Quantity" value={amount1} onChangeText={(e) => { setQty01(e); calculateThreeItemsAmount() }}></TextInput>
+                        <TextInput style={styles.input} value={qty01.toString()} keyboardType="numeric" placeholder="Quantity" onChangeText={(e) => { setQty01(e); calculateThreeItemsAmount() }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item 02 :</Text>
-                        <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem02(e); getDetails2(e) }}></TextInput>
+                        <TextInput style={styles.input} value={item02} placeholder="Item 02" onChangeText={(e) => { setItem02(e); getDetails2(e) }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
 
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item name:</Text>
-                        <TextInput style={styles.input} placeholder="IT002" value={itemName02} onChangeText={(e) => { setItemName02(e); }}></TextInput>
+                        <TextInput style={styles.input} placeholder="Item Name" value={itemName02} onChangeText={(e) => { setItemName02(e); }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item qty :</Text>
-                        <TextInput style={styles.input} placeholder="Item Name" keyboardType="numeric" value={amount2} onChangeText={(e) => { setQty02(e); calculateThreeItemsAmount() }}></TextInput>
+                        <TextInput style={styles.input} placeholder="Quantity" keyboardType="numeric" value={qty02.toString()} onChangeText={(e) => { setQty02(e); calculateThreeItemsAmount() }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item 03 :</Text>
-                        <TextInput style={styles.input} placeholder="Quantity" onChangeText={(e) => { setItem03(e); getDetails3(e); }}></TextInput>
+                        <TextInput style={styles.input} placeholder="Item 03" value={item03} onChangeText={(e) => { setItem03(e); getDetails3(e); }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
 
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item name:</Text>
-                        <TextInput style={styles.input} placeholder="IT003" value={itemName03} onChangeText={(e) => { setItemName03(e) }}></TextInput>
+                        <TextInput style={styles.input} placeholder="Item Name" value={itemName03} onChangeText={(e) => { setItemName03(e) }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>Item qty :</Text>
-                        <TextInput style={styles.input} placeholder="Item Name" value={amount3} keyboardType="numeric" onChangeText={(e) => { setQty03(e); calculateThreeItemsAmount() }}></TextInput>
+                        <TextInput style={styles.input} placeholder="Quantity" value={qty03.toString()} keyboardType="numeric" onChangeText={(e) => { setQty03(e); calculateThreeItemsAmount() }}></TextInput>
                         <StatusBar style="auto" />
                     </View>
                     <View style={{ marginTop: 10 }}>
@@ -267,7 +351,7 @@ function UpdateDraft() {
                     </View>
                     <View style={{ marginTop: 10 }}>
                         <Text style={styles.text}>comments :</Text>
-                        <TextInput style={styles.input} placeholder="Additional Note" onChangeText={(e) => { setComment(e); }}
+                        <TextInput style={styles.input} placeholder="Additional Note.." value={comment} onChangeText={(e) => { setComment(e); }}
                         ></TextInput>
                         <StatusBar style="auto" />
                     </View>
@@ -277,11 +361,11 @@ function UpdateDraft() {
                                 <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Submit</Text>
                             </View>
                         </TouchableHighlight>
-                        {/* <TouchableHighlight onPress={saveAsDraft}>
+                        <TouchableHighlight onPress={saveAsDraft}>
                             <View style={styles.btnDraft}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Save as Draft</Text>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Update</Text>
                             </View>
-                        </TouchableHighlight> */}
+                        </TouchableHighlight>
                     </View>
 
 

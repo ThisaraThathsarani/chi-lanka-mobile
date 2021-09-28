@@ -13,6 +13,9 @@ const wait = (timeout) => {
 }
 
 function draftList() {
+
+    const [modalData, setModalData] = useState([]);
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const [draftList, setdraftList] = useState([]);
@@ -53,6 +56,8 @@ function draftList() {
         console.log("iddddddd", id);
 
     }, [id])
+
+
 
 
     const LeftSwipeActions = () => {
@@ -123,7 +128,7 @@ function draftList() {
                         // openLeft={setId(element.draftid)}
                         // leftThreshold={'50%'} rightThreshold={'50%'}
                         renderRightActions={RightSwipeActions}>
-                        <TouchableOpacity onPress={() => { console.log("clicked data", setId(element.draftid)) }}>
+                        <TouchableOpacity onPress={() => { setId(element.draftid), setModalData(element) }}>
                             <View style={[styles.itemList, styles.elevation]}>
                                 <Text style={styles.titleID}>{element.draftid}</Text>
                                 <Text style={styles.titleData}>{element.title}</Text>
@@ -174,7 +179,7 @@ function draftList() {
 
             >
                 <UpdateDraft
-                    data={modalVisible}
+                    data={modalData}
                     onHide={() => setModalVisible(false)}
 
                 />
