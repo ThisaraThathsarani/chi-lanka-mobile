@@ -7,6 +7,8 @@ import placeAnOrder from './src/components/placeAnOrder';
 import draftList from './src/components/draftList';
 
 
+
+
 const defaultTheme = {
   ...DefaultTheme,
   // dark: false,
@@ -20,6 +22,7 @@ const defaultTheme = {
 };
 
 const Tab = createBottomTabNavigator();
+
 
 export default function App() {
   return (
@@ -50,6 +53,8 @@ export default function App() {
         <Tab.Screen name="draftList" component={draftList} options={{ headerTitleAlign: 'center', title: 'Drafts List' }} />
 
       </Tab.Navigator>
+
+
     </NavigationContainer>
   );
 }

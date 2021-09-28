@@ -73,7 +73,16 @@ function draftList() {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
+        wait(500).then(() => setRefreshing(false));
+
+        getAllDrafts().then((res) => {
+
+            if (res.ok) {
+                setdraftList(res.data);
+            }
+        }).catch((err) => {
+            alert("error", err);
+        })
     }, []);
 
 
