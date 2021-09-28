@@ -46,7 +46,7 @@ function draftList() {
     // ];
 
     const Item = ({ title, draftid }) => (
-        <TouchableOpacity>
+        <TouchableOpacity >
             <View style={[styles.itemS, styles.elevation]}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.title}>{draftid}</Text>
