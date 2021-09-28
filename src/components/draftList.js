@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import { Modal, SafeAreaView, Pressable, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
 import { getAllDrafts } from "../services/draftsService";
+import updateDraft from './updateDraft';
+
 
 
 const wait = (timeout) => {
@@ -8,6 +10,7 @@ const wait = (timeout) => {
 }
 
 function draftList() {
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [draftList, setdraftList] = useState("");
     const [refreshing, setRefreshing] = React.useState(false);
@@ -62,6 +65,12 @@ function draftList() {
             <View style={[styles.itemS, styles.elevation]}>
                 <Text style={styles.titleID}>{draftid}</Text>
                 <Text style={styles.titleData}>{title}</Text>
+                <Pressable
+
+                    onPress={() => setModalVisible(true)}
+                >
+                    <Text >Show Modal</Text>
+                </Pressable>
             </View>
         </TouchableOpacity>
     );
@@ -72,7 +81,13 @@ function draftList() {
         <Item title={item.title} draftid={item.draftid} />
     );
 
+
     return (
+
+
+
+
+
 
         <ScrollView
 
@@ -84,6 +99,28 @@ function draftList() {
             }
         >
 
+
+
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <Text>uwiefhiuefhhufheugugbbhbgbgebjrgnjrhngnjgsnngrjhngngn</Text>
+            </Modal>
+
+
+
+
+
+
+
+
             <View style={{ flex: 1 }}>
 
                 <FlatList
@@ -94,6 +131,9 @@ function draftList() {
 
             </View>
         </ScrollView>
+
+
+
     )
 }
 
@@ -132,6 +172,54 @@ const styles = StyleSheet.create({
         shadowColor: "#52006A",
         elevation: 5,
     },
+
+
+
+
+
+
+    //modal style
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    buttonOpen: {
+        backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    }
 });
 
 export default draftList
