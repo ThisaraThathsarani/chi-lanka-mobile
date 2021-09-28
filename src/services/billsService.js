@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOST = "http://localhost:4000";
+const HOST = "http://10.0.2.2:4000";
 
 
 //for creating of a Receipt for a payment

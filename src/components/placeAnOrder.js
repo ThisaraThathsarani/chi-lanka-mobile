@@ -1,21 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TextInput, ImageBackground, ScrollView, TouchableHighlight, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, RefreshControl, ScrollView, TouchableHighlight, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-import { addOrder } from "../services/purchaseOrderService";
+import { addOrder, lastAddedOrder } from "../services/purchaseOrderService";
 import { addOrderItems } from "../services/purchaseOrderItemsService";
 import { addRequisition } from "../services/requisitionService";
 import { createPayment } from "../services/paymentService";
 import { addNewDraft } from "../services/draftsService";
+import { getItemDetails } from "../services/itemServices";
+
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 
 function placeAnOrder({ navigation }) {
+
+    const [refreshing, setRefreshing] = React.useState(false);
     const [orderid, setOrderId] = useState("");
     const [orderdate, setOrderdate] = useState("");
     const [suppliername, setSuppliername] = useState("");
     const [title, setTitle] = useState("");
     const [shipto, setShipTo] = useState("");
-    const [total, setTotal] = useState("");
+    const [total, setTotal] = useState(500);
     const [comment, setComment] = useState("");
     const [item01, setItem01] = useState("");
     const [item02, setItem02] = useState("");
@@ -26,9 +34,101 @@ function placeAnOrder({ navigation }) {
     const [qty01, setQty01] = useState("");
     const [qty02, setQty02] = useState("");
     const [qty03, setQty03] = useState("");
-    const [amount1, setAmount01] = useState(100);
-    const [amount2, setAmount02] = useState(100);
-    const [amount3, setAmount03] = useState(100);
+    const [amount1, setAmount01] = useState("");
+    const [amount2, setAmount02] = useState("");
+    const [amount3, setAmount03] = useState("");
+
+    var [id, setID] = useState("");
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+    }, []);
+
+    useEffect(() => {
+        console.log("Totalllllllll", total);
+        calculateThreeItemsAmount();
+        nextOrderId();
+
+    }, [total, orderid])
+
+
+    function getDetails1(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName01(res.data.item.itemname);
+                setAmount01(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
+    function getDetails2(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName02(res.data.item.itemname);
+                setAmount02(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
+    function getDetails3(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName03(res.data.item.itemname);
+                setAmount03(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
+
+    function calculateItem1Amount() {
+        var firstAmount = amount1 * qty01;
+        //document.getElementById("totalAmount").value = firstAmount;
+        //setTotal(firstAmount)
+        return firstAmount;
+    }
+
+    function calculateTwoItemsAmount() {
+        var secondAmount = (amount2 * qty02) + calculateItem1Amount();
+        //document.getElementById("totalAmount").value = secondAmount;
+        //setTotal(secondAmount)
+        return secondAmount;
+    }
+
+    function calculateThreeItemsAmount() {
+        var thirdAmount = (amount3 * qty03) + calculateTwoItemsAmount();
+        setTotal(thirdAmount)
+        //document.getElementById("totalAmount").value = thirdAmount;
+        console.log("Price", total);
+    }
+
+
+    function nextOrderId() {
+        lastAddedOrder().then((response) => {
+            if (response.ok) {
+                setID(response.data.orderid)
+                console.log("iddddd", response.data.orderid)
+            }
+
+            id = id.substring(2, 5)
+            id = Number(id) + 1;
+            var id2 = "OI00" + id;
+            setOrderId(id2)
+            //alert(id2)
+        })
+    }
 
 
     function sendData(e) {
@@ -36,7 +136,7 @@ function placeAnOrder({ navigation }) {
         // Alert.alert("function called")
         const newOrder = {
             orderid,
-            orderdate,
+            orderdate: new Date().toISOString().slice(0, 10),
             suppliername,
             title,
             shipto,
@@ -143,6 +243,7 @@ function placeAnOrder({ navigation }) {
 
 
     const saveAsDraft = () => {
+        console.log(orderid, title, total, item01, itemName01, qty01)
         const newDraft = {
             draftid: orderid,
             draftdate: orderdate,
@@ -183,11 +284,16 @@ function placeAnOrder({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
 
-            <ScrollView>
+            <ScrollView refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }>
 
                 <View style={{ marginTop: 20 }} >
                     <Text style={styles.text}>Order ID :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setOrderId(e) }}></TextInput>
+                    <TextInput style={styles.input} value={orderid} placeholder="Ship to" onChangeText={(e) => { setOrderId(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
@@ -205,6 +311,9 @@ function placeAnOrder({ navigation }) {
                             }>
                             <Picker.Item label="KDH Constructions" value="KDH" />
                             <Picker.Item label="PERERA Constructions" value="PERERA" />
+                            <Picker.Item label="Manual Handlers" value="Manual Handlers" />
+                            <Picker.Item label="Builders Barn" value="Builders Barn" />
+                            <Picker.Item label="Pinnacle" value="Pinnacle" />
                         </Picker>
                     </View>
                 </View>
@@ -221,60 +330,61 @@ function placeAnOrder({ navigation }) {
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item 01 :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem01(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="IT001" onChangeText={(e) => { setItem01(e); getDetails1(e); }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item name:</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItemName01(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Item Name" value={itemName01} onChangeText={(e) => { setItemName01(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item qty :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setQty01(e) }}></TextInput>
+                    <TextInput style={styles.input} keyboardType="numeric" placeholder="Quantity" value={amount1} onChangeText={(e) => { setQty01(e); calculateThreeItemsAmount() }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item 02 :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem02(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem02(e); getDetails2(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item name:</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItemName02(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="IT002" value={itemName02} onChangeText={(e) => { setItemName02(e); }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item qty :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setQty02(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Item Name" keyboardType="numeric" value={amount2} onChangeText={(e) => { setQty02(e); calculateThreeItemsAmount() }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item 03 :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem03(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Quantity" onChangeText={(e) => { setItem03(e); getDetails3(e); }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item name:</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItemName03(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="IT003" value={itemName03} onChangeText={(e) => { setItemName03(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item qty :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setQty03(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Item Name" value={amount3} keyboardType="numeric" onChangeText={(e) => { setQty03(e); calculateThreeItemsAmount() }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>total :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setTotal(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Total" value={total.toString()} ></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>comments :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setComment(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Additional Note" onChangeText={(e) => { setComment(e); }}
+                    ></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ alignItems: 'center', marginTop: 20 }}>

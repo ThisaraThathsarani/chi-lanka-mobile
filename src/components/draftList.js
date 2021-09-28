@@ -10,6 +10,20 @@ const wait = (timeout) => {
 function draftList() {
 
     const [draftList, setdraftList] = useState("");
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+        getAllDrafts().then((res) => {
+
+            if (res.ok) {
+                setdraftList(res.data);
+            }
+        }).catch((err) => {
+            alert("error", err);
+        })
+    }, []);
 
 
     useEffect(() => {
@@ -23,9 +37,7 @@ function draftList() {
             alert("error", err);
         })
 
-    }
-
-        , [])
+    }, [])
 
 
 
@@ -48,8 +60,8 @@ function draftList() {
     const Item = ({ title, draftid }) => (
         <TouchableOpacity >
             <View style={[styles.itemS, styles.elevation]}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.title}>{draftid}</Text>
+                <Text style={styles.titleID}>{draftid}</Text>
+                <Text style={styles.titleData}>{title}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -58,37 +70,7 @@ function draftList() {
     const renderItem = ({ item }) => (
 
         <Item title={item.title} draftid={item.draftid} />
-
-
-
-
-
     );
-
-
-
-
-
-    const [refreshing, setRefreshing] = React.useState(false);
-
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        wait(500).then(() => setRefreshing(false));
-
-        getAllDrafts().then((res) => {
-
-            if (res.ok) {
-                setdraftList(res.data);
-            }
-        }).catch((err) => {
-            alert("error", err);
-        })
-    }, []);
-
-
-
-
-
 
     return (
 
@@ -126,8 +108,12 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 16,
     },
-    title: {
-        fontSize: 32,
+    titleData: {
+        fontSize: 18,
+    },
+    titleID: {
+        fontWeight: 'bold',
+        fontSize: 18,
     },
 
     itemS: {
