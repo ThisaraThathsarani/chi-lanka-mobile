@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react'
-<<<<<<< HEAD
 import { Animated, SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
 import { getAllDrafts, deleteDraftPermenantly } from "../services/draftsService";
 
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { RectButton } from 'react-native-gesture-handler';
-=======
-import { Modal, SafeAreaView, Pressable, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
-import { getAllDrafts } from "../services/draftsService";
-import updateDraft from './updateDraft';
-
->>>>>>> 74873f2aa318458d137f5a478f91274e7f15a962
 
 
 const wait = (timeout) => {
