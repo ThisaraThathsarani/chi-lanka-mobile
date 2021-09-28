@@ -1,18 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TextInput, ImageBackground, ScrollView, TouchableHighlight, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, RefreshControl, ScrollView, TouchableHighlight, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-import { addOrder } from "../services/purchaseOrderService";
+import { addOrder, lastAddedOrder } from "../services/purchaseOrderService";
 import { addOrderItems } from "../services/purchaseOrderItemsService";
 import { addRequisition } from "../services/requisitionService";
 import { createPayment } from "../services/paymentService";
 import { addNewDraft } from "../services/draftsService";
 import { getItemDetails } from "../services/itemServices";
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 
 function placeAnOrder({ navigation }) {
 
+    const [refreshing, setRefreshing] = React.useState(false);
     const [orderid, setOrderId] = useState("");
     const [orderdate, setOrderdate] = useState("");
     const [suppliername, setSuppliername] = useState("");
@@ -33,11 +38,19 @@ function placeAnOrder({ navigation }) {
     const [amount2, setAmount02] = useState("");
     const [amount3, setAmount03] = useState("");
 
+    var [id, setID] = useState("");
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+    }, []);
 
     useEffect(() => {
         console.log("Totalllllllll", total);
-        calculateThreeItemsAmount()
-    }, [total])
+        calculateThreeItemsAmount();
+        nextOrderId();
+
+    }, [total, orderid])
 
 
     function getDetails1(value) {
@@ -99,6 +112,22 @@ function placeAnOrder({ navigation }) {
         setTotal(thirdAmount)
         //document.getElementById("totalAmount").value = thirdAmount;
         console.log("Price", total);
+    }
+
+
+    function nextOrderId() {
+        lastAddedOrder().then((response) => {
+            if (response.ok) {
+                setID(response.data.orderid)
+                console.log("iddddd", response.data.orderid)
+            }
+
+            id = id.substring(2, 5)
+            id = Number(id) + 1;
+            var id2 = "OI00" + id;
+            setOrderId(id2)
+            //alert(id2)
+        })
     }
 
 
@@ -255,11 +284,16 @@ function placeAnOrder({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
 
-            <ScrollView>
+            <ScrollView refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }>
 
                 <View style={{ marginTop: 20 }} >
                     <Text style={styles.text}>Order ID :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setOrderId(e) }}></TextInput>
+                    <TextInput style={styles.input} value={orderid} placeholder="Ship to" onChangeText={(e) => { setOrderId(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
