@@ -10,6 +10,20 @@ const wait = (timeout) => {
 function draftList() {
 
     const [draftList, setdraftList] = useState("");
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+        getAllDrafts().then((res) => {
+
+            if (res.ok) {
+                setdraftList(res.data);
+            }
+        }).catch((err) => {
+            alert("error", err);
+        })
+    }, []);
 
 
     useEffect(() => {
@@ -23,9 +37,7 @@ function draftList() {
             alert("error", err);
         })
 
-    }
-
-        , [])
+    }, [])
 
 
 
@@ -58,28 +70,7 @@ function draftList() {
     const renderItem = ({ item }) => (
 
         <Item title={item.title} draftid={item.draftid} />
-
-
-
-
-
     );
-
-
-
-
-
-    const [refreshing, setRefreshing] = React.useState(false);
-
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
-    }, []);
-
-
-
-
-
 
     return (
 
