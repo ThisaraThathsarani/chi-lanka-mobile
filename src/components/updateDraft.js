@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { StatusBar } from 'expo-status-bar';
 
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TextInput, Pressable, View } from 'react-native';
 
-function updateDraft() {
+function UpdateDraft() {
+
+    const [modalVisible, setModalVisible] = useState(false);
     return (
 
+
         <View style={styles.centeredView}>
+
+
+
+
             <View style={styles.modalView}>
                 <Text style={styles.modalText}>Hello World!</Text>
+
+                <View style={{ marginTop: 20 }} >
+                    <Text style={styles.text}>Order ID :</Text>
+                    <TextInput style={styles.input} placeholder="Ship to" ></TextInput>
+                    <StatusBar style="auto" />
+                </View>
+
+
                 <Pressable
                     style={[styles.button, styles.buttonClose]}
                     onPress={() => setModalVisible(!modalVisible)}
@@ -15,7 +31,11 @@ function updateDraft() {
                     <Text style={styles.textStyle}>Hide Modal</Text>
                 </Pressable>
             </View>
-        </View>
+
+
+
+        </View >
+
 
     )
 }
@@ -46,7 +66,9 @@ const styles = StyleSheet.create({
     button: {
         borderRadius: 20,
         padding: 10,
-        elevation: 2
+        elevation: 2,
+        marginTop: 5
+
     },
     buttonOpen: {
         backgroundColor: "#F194FF",
@@ -62,7 +84,25 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: "center"
-    }
+    },
+
+
+    //input css
+    input: {
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: "black",
+        width: 350,
+        padding: 10,
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    text: {
+        color: 'black',
+        fontSize: 18
+    },
+
 });
 
-export default updateDraft
+export default UpdateDraft

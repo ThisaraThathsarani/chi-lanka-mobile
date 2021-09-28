@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, SafeAreaView, Pressable, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
 import { getAllDrafts } from "../services/draftsService";
-import updateDraft from './updateDraft';
+import UpdateDraft from './updateDraft';
 
 
 
@@ -14,6 +14,11 @@ function draftList() {
 
     const [draftList, setdraftList] = useState("");
     const [refreshing, setRefreshing] = React.useState(false);
+
+    const [modalDataUpdate, setModalDataUpdate] = useState([]);
+    const [modalUpdate, setModalUpdate] = useState(false);
+
+
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -43,22 +48,6 @@ function draftList() {
     }, [])
 
 
-
-
-    // const DATA = [
-    //     {
-    //         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    //         title: 'First Item',
-    //     },
-    //     {
-    //         id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    //         title: 'Second Item',
-    //     },
-    //     {
-    //         id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    //         title: 'Third Item',
-    //     },
-    // ];
 
     const Item = ({ title, draftid }) => (
         <TouchableOpacity >
@@ -102,17 +91,6 @@ function draftList() {
 
 
 
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <Text>uwiefhiuefhhufheugugbbhbgbgebjrgnjrhngnjgsnngrjhngngn</Text>
-            </Modal>
 
 
 
@@ -130,6 +108,30 @@ function draftList() {
                 />
 
             </View>
+
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+
+
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(false);
+                }}
+            // onBackdropPress={() => setModalVisible(false)}
+
+
+            >
+                <UpdateDraft
+                // data={modalDataUpdate}
+                // onHide={() => setModalDataUpdate(false)}
+
+                />
+
+            </Modal>
+
         </ScrollView>
 
 
