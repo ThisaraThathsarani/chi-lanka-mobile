@@ -60,8 +60,8 @@ function draftList() {
     const Item = ({ title, draftid }) => (
         <TouchableOpacity>
             <View style={[styles.itemS, styles.elevation]}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.title}>{draftid}</Text>
+                <Text style={styles.titleID}>{draftid}</Text>
+                <Text style={styles.titleData}>{title}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -108,8 +108,12 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 16,
     },
-    title: {
-        fontSize: 32,
+    titleData: {
+        fontSize: 18,
+    },
+    titleID: {
+        fontWeight: 'bold',
+        fontSize: 18,
     },
 
     itemS: {
