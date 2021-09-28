@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, SafeAreaView, Pressable, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
-import { getAllDrafts } from "../services/draftsService";
+import { Alert, Modal, SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import { getAllDrafts, deleteDraftPermenantly } from "../services/draftsService";
+
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
 import UpdateDraft from './updateDraft';
 
 
@@ -12,8 +15,9 @@ const wait = (timeout) => {
 function draftList() {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [draftList, setdraftList] = useState("");
+    const [draftList, setdraftList] = useState([]);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [id, setId] = useState("");
 
     const [modalDataUpdate, setModalDataUpdate] = useState([]);
     const [modalUpdate, setModalUpdate] = useState(false);
@@ -33,11 +37,12 @@ function draftList() {
         })
     }, []);
 
-
     useEffect(() => {
 
-        getAllDrafts().then((res) => {
 
+
+        getAllDrafts().then((res) => {
+            console.log("listtttttttttt", res);
             if (res.ok) {
                 setdraftList(res.data);
             }
@@ -45,30 +50,90 @@ function draftList() {
             alert("error", err);
         })
 
-    }, [])
+        console.log("iddddddd", id);
+
+    }, [id])
 
 
+    const LeftSwipeActions = () => {
+        // deleteDraftPermenantly(id);
+        console.log("updateeeeeeeeeeee")
+        return (
+            <View
+                style={{ flex: 1, backgroundColor: '#FF3131', justifyContent: 'center' }}
+            >
 
-    const Item = ({ title, draftid }) => (
-        <TouchableOpacity >
-            <View style={[styles.itemS, styles.elevation]}>
-                <Text style={styles.titleID}>{draftid}</Text>
-                <Text style={styles.titleData}>{title}</Text>
-                <Pressable
-
-                    onPress={() => setModalVisible(true)}
-                >
-                    <Text >Show Modal</Text>
-                </Pressable>
+                <TouchableOpacity onPress={() => { deleteDraftPermenantly(id) }}>
+                    <Text
+                        style={{
+                            color: 'white',
+                            paddingHorizontal: 10,
+                            fontWeight: '600',
+                            paddingHorizontal: 30,
+                            paddingVertical: 20,
+                            fontSize: 18,
+                            marginLeft: 150
+                        }}
+                    >
+                        Delete
+                    </Text>
+                </TouchableOpacity>
             </View>
-        </TouchableOpacity>
-    );
+        );
+    };
+
+    const RightSwipeActions = () => {
+        // console.log("updateeeeeeeeeeee")
+        return (
+            <View
+                style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}
+            >
+                <TouchableOpacity onPress={() => { setModalVisible(true) }}>
+                    <Text
+                        style={{
+                            color: 'white',
+                            paddingHorizontal: 10,
+                            fontWeight: '600',
+                            paddingHorizontal: 30,
+                            paddingVertical: 20,
+                            fontSize: 18,
+                            marginLeft: 150
+                        }}
+                    >
+                        Update
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    function deleteDraft() {
+        console.log("deleteeeeeeee")
+        // console.log("delete dataa", data)
+    }
 
 
-    const renderItem = ({ item }) => (
 
-        <Item title={item.title} draftid={item.draftid} />
-    );
+    const List = () => {
+        return draftList.map((element) => {
+            return (
+                <View key={element.draftid}>
+                    <Swipeable
+                        renderLeftActions={LeftSwipeActions}
+                        // openLeft={setId(element.draftid)}
+                        // leftThreshold={'50%'} rightThreshold={'50%'}
+                        renderRightActions={RightSwipeActions}>
+                        <TouchableOpacity onPress={() => { console.log("clicked data", setId(element.draftid)) }}>
+                            <View style={[styles.itemList, styles.elevation]}>
+                                <Text style={styles.titleID}>{element.draftid}</Text>
+                                <Text style={styles.titleData}>{element.title}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </Swipeable>
+                </View >
+            )
+        })
+    }
 
 
     return (
@@ -79,7 +144,6 @@ function draftList() {
 
 
         <ScrollView
-
             refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
@@ -88,24 +152,9 @@ function draftList() {
             }
         >
 
+            <View style={{ flex: 1, paddingTop: 20 }}>
 
-
-
-
-
-
-
-
-
-
-
-            <View style={{ flex: 1 }}>
-
-                <FlatList
-                    data={draftList}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />
+                <View>{List()}</View>
 
             </View>
 
@@ -113,7 +162,7 @@ function draftList() {
             <Modal
                 animationType="slide"
                 transparent={true}
-
+                onHide={() => setModalVisible(false)}
 
                 visible={modalVisible}
                 onRequestClose={() => {
@@ -125,14 +174,14 @@ function draftList() {
 
             >
                 <UpdateDraft
-                // data={modalDataUpdate}
-                // onHide={() => setModalDataUpdate(false)}
+                    data={modalVisible}
+                    onHide={() => setModalVisible(false)}
 
                 />
 
             </Modal>
 
-        </ScrollView>
+        </ScrollView >
 
 
 
@@ -158,7 +207,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
 
-    itemS: {
+    itemList: {
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,

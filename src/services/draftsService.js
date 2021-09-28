@@ -68,8 +68,9 @@ export const getDraftDetail = async (draftID) => {
 };
 
 export const deleteDraftPermenantly = async (draftid) => {
-    console.log("dataa", draftid);
-    await axios.delete(`${HOST}/draft/deleteDraft/${draftid}`);
+    console.log("dataa for delete", draftid);
+    const res = await axios.delete(`${HOST}/draft/deleteDraft/${draftid}`);
+    console.log("resoponse", res.data.status)
     try {
         return {
             ok: true,
