@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TextInput, ImageBackground, ScrollView, TouchableHighlight, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, RefreshControl, ScrollView, TouchableHighlight, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import { addOrder, lastAddedOrder } from "../services/purchaseOrderService";
@@ -10,9 +10,14 @@ import { createPayment } from "../services/paymentService";
 import { addNewDraft } from "../services/draftsService";
 import { getItemDetails } from "../services/itemServices";
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 
 function placeAnOrder({ navigation }) {
 
+    const [refreshing, setRefreshing] = React.useState(false);
     const [orderid, setOrderId] = useState("");
     const [orderdate, setOrderdate] = useState("");
     const [suppliername, setSuppliername] = useState("");
@@ -35,12 +40,17 @@ function placeAnOrder({ navigation }) {
 
     var [id, setID] = useState("");
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(500).then(() => setRefreshing(false));
+    }, []);
+
     useEffect(() => {
         console.log("Totalllllllll", total);
         calculateThreeItemsAmount();
         nextOrderId();
 
-    }, [total])
+    }, [total, orderid])
 
 
     function getDetails1(value) {
@@ -274,7 +284,12 @@ function placeAnOrder({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
 
-            <ScrollView>
+            <ScrollView refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }>
 
                 <View style={{ marginTop: 20 }} >
                     <Text style={styles.text}>Order ID :</Text>
