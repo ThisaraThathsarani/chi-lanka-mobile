@@ -18,18 +18,12 @@ import { getItemDetails } from "../services/itemServices";
 
 function UpdateDraft(data) {
 
-    const [modalVisible, setModalVisible] = useState(false);
-
-
-
-
-
     const [orderid, setOrderId] = useState("");
     const [orderdate, setOrderdate] = useState("");
     const [suppliername, setSuppliername] = useState("");
     const [title, setTitle] = useState("");
     const [shipto, setShipTo] = useState("");
-    const [total, setTotal] = useState(0);
+    const [total, setTotal] = useState("");
     const [comment, setComment] = useState("");
     const [item01, setItem01] = useState("");
     const [item02, setItem02] = useState("");
@@ -47,7 +41,6 @@ function UpdateDraft(data) {
 
 
     useEffect(() => {
-        console.log("modal data comming", data.data)
 
         setOrderId(data.data.draftid)
         setOrderdate(data.data.draftdate)
@@ -65,17 +58,32 @@ function UpdateDraft(data) {
         setQty01(data.data.qty01)
         setQty02(data.data.qty02)
         setQty03(data.data.qty03)
-        setAmount01(data.data.amount1)
-        setAmount02(data.data.amount2)
-        setAmount03(data.data.amount3)
+        setAmount01(data.data.amount01)
+        setAmount02(data.data.amount02)
+        setAmount03(data.data.amount03)
 
 
     }, [data.data])
 
+    useEffect(() => {
+    }, [total])
+
+    function calculateItem1Amount() {
+        var firstAmount = parseInt(amount1) * parseInt(qty01);
+        return firstAmount;
+    }
+
+    function calculateTwoItemsAmount() {
+        var secondAmount = (parseInt(amount2) * parseInt(qty02)) + calculateItem1Amount();
+        return secondAmount;
+    }
+
+    function calculateThreeItemsAmount() {
+        var thirdAmount = (parseInt(amount3) * parseInt(qty03)) + calculateTwoItemsAmount();
+        setTotal(thirdAmount)
+    }
 
     function sendData(e) {
-        // e.preventDefault();
-        // Alert.alert("function called")
         const newOrder = {
             orderid,
             orderdate: new Date().toISOString().slice(0, 10),
@@ -91,17 +99,17 @@ function UpdateDraft(data) {
         const newOrderItems = {
             orderid,
             item01,
-            item02: "",
-            item03: "",
+            item02,
+            item03,
             itemName01,
-            itemName02: "",
-            itemName03: "",
+            itemName02,
+            itemName03,
             qty01,
-            qty02: 5,
-            qty03: 5,
-            amount1: 100,
-            amount2: 100,
-            amount3: 100
+            qty02,
+            qty03,
+            amount1,
+            amount2,
+            amount3
         }
 
         const newPayment = {
@@ -122,7 +130,7 @@ function UpdateDraft(data) {
                     var amount03 = amount3;
                     status = "Waiting for Approval";
 
-                    alert(amount01 + amount02 + amount03)
+                    Alert.alert(amount01 + amount02 + amount03)
                     const newRequisition = {
                         requisitionid, orderdate, suppliername, title, shipto, status, total, comment, item01, item02, item03, itemName01, itemName02, itemName03,
                         qty01, qty02, qty03, amount01, amount02, amount03
@@ -212,28 +220,9 @@ function UpdateDraft(data) {
 
         updateDraft(orderid, newDraft).then((res) => {
             if (res.ok) {
-                const message = "Draft Saved Succesfully"
-                Swal.fire({
-                    title: "Success! ",
-                    text: `${message}`,
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1000
-
-                }).then(() => {
-                    window.location.reload();
-                })
-
-
+                Alert.alert("Draft Saved Succesfully! ")
             } else {
-                Swal.fire({
-                    title: "Oops! ",
-                    text: `${res.err}`,
-                    icon: 'error',
-                    showConfirmButton: false,
-                    timer: 1500
-
-                })
+                Alert.alert("Oops! somthing went wrong")
             }
         })
     }

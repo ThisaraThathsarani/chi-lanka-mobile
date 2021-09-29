@@ -45,7 +45,6 @@ function draftList() {
 
 
         getAllDrafts().then((res) => {
-            console.log("listtttttttttt", res);
             if (res.ok) {
                 setdraftList(res.data);
             }
@@ -53,16 +52,12 @@ function draftList() {
             alert("error", err);
         })
 
-        console.log("iddddddd", id);
-
     }, [id])
 
 
 
 
     const LeftSwipeActions = () => {
-        // deleteDraftPermenantly(id);
-        console.log("updateeeeeeeeeeee")
         return (
             <View
                 style={{ flex: 1, backgroundColor: '#FF3131', justifyContent: 'center' }}
@@ -88,7 +83,6 @@ function draftList() {
     };
 
     const RightSwipeActions = () => {
-        // console.log("updateeeeeeeeeeee")
         return (
             <View
                 style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}
@@ -112,11 +106,6 @@ function draftList() {
         );
     };
 
-    function deleteDraft() {
-        console.log("deleteeeeeeee")
-        // console.log("delete dataa", data)
-    }
-
 
 
     const List = () => {
@@ -125,8 +114,6 @@ function draftList() {
                 <View key={element.draftid}>
                     <Swipeable
                         renderLeftActions={LeftSwipeActions}
-                        // openLeft={setId(element.draftid)}
-                        // leftThreshold={'50%'} rightThreshold={'50%'}
                         renderRightActions={RightSwipeActions}>
                         <TouchableOpacity onPress={() => { setId(element.draftid), setModalData(element) }}>
                             <View style={[styles.itemList, styles.elevation]}>
@@ -142,11 +129,6 @@ function draftList() {
 
 
     return (
-
-
-
-
-
 
         <ScrollView
             refreshControl={
@@ -174,9 +156,6 @@ function draftList() {
                     Alert.alert("Modal has been closed.");
                     setModalVisible(false);
                 }}
-            // onBackdropPress={() => setModalVisible(false)}
-
-
             >
                 <UpdateDraft
                     data={modalData}
@@ -228,11 +207,6 @@ const styles = StyleSheet.create({
         shadowColor: "#52006A",
         elevation: 5,
     },
-
-
-
-
-
 
     //modal style
     centeredView: {

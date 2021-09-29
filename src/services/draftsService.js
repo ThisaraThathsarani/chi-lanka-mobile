@@ -7,7 +7,6 @@ const HOST = "http://10.0.2.2:4000";
 export const getAllDrafts = async () => {
     try {
         const response = await axios.get(`${HOST}/draft/displayDraft`);
-        console.log("dataaaaaaaa", response)
         return {
             ok: true,
             data: response.data
@@ -55,7 +54,6 @@ export const getDraftDetail = async (draftID) => {
     console.log("data",);
     try {
         const response = await axios.get(`${HOST}/draft/getDraftByID/${draftID}`);
-        console.log(response, "res");
         return {
             ok: true,
             data: response.data,
@@ -68,9 +66,7 @@ export const getDraftDetail = async (draftID) => {
 };
 
 export const deleteDraftPermenantly = async (draftid) => {
-    console.log("dataa for delete", draftid);
-    const res = await axios.delete(`${HOST}/draft/deleteDraft/${draftid}`);
-    console.log("resoponse", res.data.status)
+    await axios.delete(`${HOST}/draft/deleteDraft/${draftid}`);
     try {
         return {
             ok: true,
