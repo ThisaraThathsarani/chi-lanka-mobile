@@ -297,7 +297,7 @@ function placeAnOrder({ navigation }) {
                     <StatusBar style="auto" />
                 </View>
 
-                <View>
+                <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Supplier :</Text>
                     <View style={{
                         borderWidth: 1, borderColor: 'red', width: 350,
