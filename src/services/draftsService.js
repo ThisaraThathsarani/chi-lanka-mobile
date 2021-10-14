@@ -21,7 +21,7 @@ export const getAllDrafts = async () => {
 
 //to add a draft
 export const addNewDraft = async (payload) => {
-    console.log("data for draft", payload)
+    //console.log("data for draft", payload)
     try {
         await axios.post(`${HOST}/draft/addDraft`, payload)
         return {
@@ -51,7 +51,7 @@ export const updateDraft = async (draftID, payload) => {
 }
 
 export const getDraftDetail = async (draftID) => {
-    console.log("data",);
+    //console.log("data",);
     try {
         const response = await axios.get(`${HOST}/draft/getDraftByID/${draftID}`);
         return {

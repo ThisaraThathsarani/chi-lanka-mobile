@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Modal, SafeAreaView, RefreshControl, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import { Alert, Modal, SafeAreaView, RefreshControl, ImageBackground, View, FlatList, StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
 import { getAllDrafts, deleteDraftPermenantly } from "../services/draftsService";
 
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -41,7 +41,6 @@ function draftList() {
     }, []);
 
     useEffect(() => {
-
 
 
         getAllDrafts().then((res) => {
@@ -130,43 +129,48 @@ function draftList() {
 
     return (
 
-        <ScrollView
-            refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }
-        >
-
-            <View style={{ flex: 1, paddingTop: 20 }}>
-
-                <View>{List()}</View>
-
-            </View>
-
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                onHide={() => setModalVisible(false)}
-
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(false);
-                }}
+        <View>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             >
-                <UpdateDraft
-                    data={modalData}
+
+                <View style={{ flex: 1, paddingTop: 20 }}>
+
+                    <View>{List()}</View>
+
+                </View>
+
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
                     onHide={() => setModalVisible(false)}
 
-                />
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        // Alert.alert("Modal has been closed.");
+                        setModalVisible(false);
+                    }}
+                >
+                    <UpdateDraft
+                        data={modalData}
+                        onHide={() => setModalVisible(false)}
 
-            </Modal>
+                    />
 
-        </ScrollView >
+                </Modal>
 
+            </ScrollView >
+            <ImageBackground source={{
+                uri: "https://i.ibb.co/71fmQyN/Nice-Png-blocks-png-1175356.png",
+            }} style={styles.image}>
+            </ImageBackground>
+        </View>
 
 
     )
@@ -201,6 +205,16 @@ const styles = StyleSheet.create({
         marginLeft: 17,
         borderColor: "#D8D8D8",
         borderWidth: 0.5
+
+    },
+    image: {
+        zIndex: -1,
+        marginTop: 210,
+        marginLeft: 60,
+        width: 300,
+        height: 300,
+        opacity: 0.3,
+        position: 'absolute',
 
     },
     elevation: {

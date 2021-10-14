@@ -7,7 +7,7 @@ export const addOrderItems = async (orderItemsPayload) => {
     console.log("order items came", orderItemsPayload)
     try {
         const response = await axios.post(`${HOST}/orderItems/addOrderItems`, orderItemsPayload);
-        console.log("dataaaaaaaa", response)
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true
         }
@@ -21,7 +21,7 @@ export const addOrderItems = async (orderItemsPayload) => {
 
 //to view one purchase orders item record
 export const getOrderItemsforOrder = async (orderID) => {
-    console.log("order id", orderID)
+    //console.log("order id", orderID)
     try {
         const response = await axios.get(`${HOST}/orderItems/displayOrderItems/${orderID}`);
         return {

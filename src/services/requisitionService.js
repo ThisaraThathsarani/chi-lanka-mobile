@@ -9,7 +9,7 @@ const HOST = "http://10.0.2.2:4000";
 export const addRequisition = async (newRequisitionPayload) => {
     try {
         const response = await axios.post(`${HOST}/requisition/addRequisition`, newRequisitionPayload);
-        console.log("dataaaaaaaa", response)
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true
         }
@@ -26,7 +26,7 @@ export const addRequisition = async (newRequisitionPayload) => {
 export const getAllRequisition = async () => {
     try {
         const response = await axios.get(`${HOST}/requisition/displayRequisition`);
-        console.log("dataaaaaaaa", response)
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true,
             data: response.data

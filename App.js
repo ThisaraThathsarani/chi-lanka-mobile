@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import draftList from './src/components/draftList';
 
 import login from './src/components/login';
 
+LogBox.ignoreAllLogs(true);
 
 
 
@@ -63,7 +64,7 @@ export default function App() {
   return (
     <NavigationContainer theme={defaultTheme}>
 
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name="Home" component={TabNavigation} options={{ headerShown: false }} />
         <Stack.Screen name="draftList" component={draftList} options={{ headerTitleAlign: 'center', title: 'Drafts List' }} />
         <Stack.Screen name="Login" component={login} options={{ headerTitleAlign: 'center' }} />

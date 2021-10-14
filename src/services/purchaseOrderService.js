@@ -4,17 +4,17 @@ const HOST = "http://10.0.2.2:4000";
 
 //to add a purchase order
 export const addOrder = async (orderPayload) => {
-    console.log("service called", orderPayload);
+    //console.log("service called", orderPayload);
     try {
-        const response = await axios.post(`${HOST}/order/addOrder`, orderPayload);
-        console.log("dataaaaaaaa", response)
+        await axios.post(`${HOST}/order/addOrder`, orderPayload);
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true
         }
     } catch (error) {
-        console.log("errorr", error)
+        //console.log("errorr", error)
         return {
-            // ok: false, err: error.response.data.error
+            ok: false, err: error.response.data.error
         }
 
     }
@@ -24,7 +24,7 @@ export const addOrder = async (orderPayload) => {
 export const getAllPurchaseOrders = async () => {
     try {
         const response = await axios.get(`${HOST}/order/displayOrders`);
-        console.log("dataaaaaaaa", response)
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true,
             data: response.data
@@ -86,7 +86,7 @@ export const getOnePurchaseOrderRecord = async (rID) => {
 export const lastAddedOrder = async () => {
 
     const response = await axios.get(`${HOST}/order/lastAddedOrder`);
-    console.log("dataa", response);
+    //console.log("dataa", response);
     try {
         return {
             ok: true,

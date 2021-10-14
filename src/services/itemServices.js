@@ -6,7 +6,7 @@ const HOST = "http://10.0.2.2:4000";
 export const addNewItem = async (itemPayload) => {
     try {
         const response = await axios.post(`${HOST}/item/addItem`, itemPayload);
-        console.log("dataaaaaaaa", response)
+        //console.log("dataaaaaaaa", response)
         return {
             ok: true
         }
@@ -20,10 +20,10 @@ export const addNewItem = async (itemPayload) => {
 
 //for retrieving items for supplier1
 export const getItemDetails = async (itemCode) => {
-    console.log("data",);
+    //console.log("data",);
     try {
         const response = await axios.get(`${HOST}/item/getItemByID/${itemCode}`);
-        console.log(response, "res");
+        //console.log(response, "res");
         return {
             ok: true,
             data: response.data,
@@ -37,10 +37,10 @@ export const getItemDetails = async (itemCode) => {
 
 //for retrieving available list of items
 export const getItemsList = async () => {
-    console.log("data",);
+    //console.log("data",);
     try {
         const response = await axios.get(`${HOST}/item/displayAvailableItems`);
-        console.log(response, "res");
+        //console.log(response, "res");
         return {
             ok: true,
             data: response.data
@@ -53,7 +53,7 @@ export const getItemsList = async () => {
 };
 
 export const updateItemDetails = async (itemId, updateItemPayload) => {
-    console.log("dataa", updateItemPayload);
+    //console.log("dataa", updateItemPayload);
     await axios.put(`${HOST}/item/updateItem/${itemId}`, updateItemPayload);
     try {
         return {
@@ -69,7 +69,7 @@ export const updateItemDetails = async (itemId, updateItemPayload) => {
 };
 
 export const deleteItemPermenantly = async (itemId) => {
-    console.log("dataa", itemId);
+    //console.log("dataa", itemId);
     await axios.delete(`${HOST}/item/removeItem/${itemId}`);
     try {
         return {
@@ -86,7 +86,7 @@ export const deleteItemPermenantly = async (itemId) => {
 export const lastAddedItem = async () => {
 
     const response = await axios.get(`${HOST}/item/lastAddedItem`);
-    console.log("dataa", response);
+    //console.log("dataa", response);
     try {
         return {
             ok: true,

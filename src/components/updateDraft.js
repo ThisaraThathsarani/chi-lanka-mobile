@@ -62,11 +62,51 @@ function UpdateDraft(data) {
         setAmount02(data.data.amount02)
         setAmount03(data.data.amount03)
 
-
     }, [data.data])
 
     useEffect(() => {
     }, [total])
+
+
+    function getDetails1(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName01(res.data.item.itemname);
+                setAmount01(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
+    function getDetails2(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName02(res.data.item.itemname);
+                setAmount02(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
+    function getDetails3(value) {
+        getItemDetails(value).then((res) => {
+            //console.log("data for table", res);
+            if (res.ok) {
+                setItemName03(res.data.item.itemname);
+                setAmount03(res.data.item.price);
+            }
+        }).catch((error) => {
+            //alert(error.message);
+
+        })
+
+    }
 
     function calculateItem1Amount() {
         var firstAmount = parseInt(amount1) * parseInt(qty01);
@@ -130,7 +170,7 @@ function UpdateDraft(data) {
                     var amount03 = amount3;
                     status = "Waiting for Approval";
 
-                    Alert.alert(amount01 + amount02 + amount03)
+                    // Alert.alert(amount01 + amount02 + amount03)
                     const newRequisition = {
                         requisitionid, orderdate, suppliername, title, shipto, status, total, comment, item01, item02, item03, itemName01, itemName02, itemName03,
                         qty01, qty02, qty03, amount01, amount02, amount03
@@ -228,19 +268,9 @@ function UpdateDraft(data) {
     }
 
 
-
-
     return (
 
-
-
-
-
-
         <View style={styles.centeredView}>
-
-
-
 
             <View style={styles.modalView}>
 

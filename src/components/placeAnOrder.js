@@ -19,11 +19,11 @@ function placeAnOrder({ navigation }) {
 
     const [refreshing, setRefreshing] = React.useState(false);
     const [orderid, setOrderId] = useState("");
-    const [orderdate, setOrderdate] = useState("");
+    const [orderdate, setOrderdate] = useState(new Date().toISOString().slice(0, 10));
     const [suppliername, setSuppliername] = useState("");
     const [title, setTitle] = useState("");
     const [shipto, setShipTo] = useState("");
-    const [total, setTotal] = useState(500);
+    const [total, setTotal] = useState(0);
     const [comment, setComment] = useState("");
     const [item01, setItem01] = useState("");
     const [item02, setItem02] = useState("");
@@ -46,10 +46,9 @@ function placeAnOrder({ navigation }) {
     }, []);
 
     useEffect(() => {
-        console.log("Totalllllllll", total);
+        //console.log("Totalllllllll", total);
         calculateThreeItemsAmount();
         nextOrderId();
-
     }, [total, orderid])
 
 
@@ -111,15 +110,16 @@ function placeAnOrder({ navigation }) {
         var thirdAmount = (amount3 * qty03) + calculateTwoItemsAmount();
         setTotal(thirdAmount)
         //document.getElementById("totalAmount").value = thirdAmount;
-        console.log("Price", total);
+        //console.log("Price", total);
     }
 
 
     function nextOrderId() {
         lastAddedOrder().then((response) => {
+            console.log("order idd", response.data.orderid);
             if (response.ok) {
                 setID(response.data.orderid)
-                console.log("iddddd", response.data.orderid)
+                //console.log("iddddd", response.data.orderid)
             }
 
             id = id.substring(2, 5)
@@ -136,7 +136,7 @@ function placeAnOrder({ navigation }) {
         // Alert.alert("function called")
         const newOrder = {
             orderid,
-            orderdate: new Date().toISOString().slice(0, 10),
+            orderdate,
             suppliername,
             title,
             shipto,
@@ -149,17 +149,17 @@ function placeAnOrder({ navigation }) {
         const newOrderItems = {
             orderid,
             item01,
-            item02: "",
-            item03: "",
+            item02,
+            item03,
             itemName01,
-            itemName02: "",
-            itemName03: "",
+            itemName02,
+            itemName03,
             qty01,
-            qty02: 5,
-            qty03: 5,
-            amount1: 100,
-            amount2: 100,
-            amount3: 100
+            qty02,
+            qty03,
+            amount1,
+            amount2,
+            amount3
         }
 
         const newPayment = {
@@ -170,49 +170,43 @@ function placeAnOrder({ navigation }) {
         }
 
         if (total > 100000) {
-            Alert.alert("Order Amount Exceeds 100,000 Do you want to submit a purchase Requisition? ").then((result) => {
-
-                if (result.isConfirmed) {
-
-                    var requisitionid = orderid;
-                    var amount01 = amount1;
-                    var amount02 = amount2;
-                    var amount03 = amount3;
-                    status = "Waiting for Approval";
-
-                    alert(amount01 + amount02 + amount03)
-                    const newRequisition = {
-                        requisitionid, orderdate, suppliername, title, shipto, status, total, comment, item01, item02, item03, itemName01, itemName02, itemName03,
-                        qty01, qty02, qty03, amount01, amount02, amount03
-                    }
-
-                    addRequisition(newRequisition).then((response) => {
-
-                        if (response.ok) {
-                            Alert.alert("Success!")
-
-                        }
-                        else {
-                            Alert.alert("Oops! Something went wrong")
-                        }
-                    })
+            Alert.alert("Order Amount Exceeds 100,000 Do you want to submit a purchase Requisition? ")
 
 
-                }
+            var requisitionid = orderid;
+            var amount01 = amount1;
+            var amount02 = amount2;
+            var amount03 = amount3;
 
-            })
+            // alert(amount01 + amount02 + amount03)
+            const newRequisition = {
+                requisitionid, orderdate, suppliername, title, shipto, status: "Waiting for Approval", total, comment, item01, item02, item03, itemName01, itemName02, itemName03,
+                qty01, qty02, qty03, amount01, amount02, amount03
+            }
 
-        } else {
-
-            addOrder(newOrder).then((response) => {
+            addRequisition(newRequisition).then((response) => {
 
                 if (response.ok) {
+                    Alert.alert("Success!")
 
-                    addOrderItems(newOrderItems).then(() => {
+                }
+                else {
+                    Alert.alert("Oops! Something went wrong")
+                }
+            })
+
+
+        } else {
+            console.log("<100000", newOrder)
+            addOrder(newOrder).then((response) => {
+                console.log("response", response.ok)
+                if (response.ok) {
+
+                    addOrderItems(newOrderItems).then((response) => {
 
                         if (response.ok) {
 
-                            createPayment(newPayment).then(() => {
+                            createPayment(newPayment).then((response) => {
 
                                 if (response.ok) {
                                     Alert.alert("Success!"
@@ -243,7 +237,7 @@ function placeAnOrder({ navigation }) {
 
 
     const saveAsDraft = () => {
-        console.log(orderid, title, total, item01, itemName01, qty01)
+        //console.log(orderid, title, total, item01, itemName01, qty01)
         const newDraft = {
             draftid: orderid,
             draftdate: orderdate,
@@ -346,34 +340,34 @@ function placeAnOrder({ navigation }) {
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item 02 :</Text>
-                    <TextInput style={styles.input} placeholder="Ship to" onChangeText={(e) => { setItem02(e); getDetails2(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="IT002" onChangeText={(e) => { setItem02(e); getDetails2(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item name:</Text>
-                    <TextInput style={styles.input} placeholder="IT002" value={itemName02} onChangeText={(e) => { setItemName02(e); }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Item Name" value={itemName02} onChangeText={(e) => { setItemName02(e); }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item qty :</Text>
-                    <TextInput style={styles.input} placeholder="Item Name" keyboardType="numeric" value={amount2} onChangeText={(e) => { setQty02(e); calculateThreeItemsAmount() }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Quantity" keyboardType="numeric" value={amount2} onChangeText={(e) => { setQty02(e); calculateThreeItemsAmount() }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item 03 :</Text>
-                    <TextInput style={styles.input} placeholder="Quantity" onChangeText={(e) => { setItem03(e); getDetails3(e); }}></TextInput>
+                    <TextInput style={styles.input} placeholder="IT003" onChangeText={(e) => { setItem03(e); getDetails3(e); }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
 
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item name:</Text>
-                    <TextInput style={styles.input} placeholder="IT003" value={itemName03} onChangeText={(e) => { setItemName03(e) }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Item Name" value={itemName03} onChangeText={(e) => { setItemName03(e) }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
                     <Text style={styles.text}>Item qty :</Text>
-                    <TextInput style={styles.input} placeholder="Item Name" value={amount3} keyboardType="numeric" onChangeText={(e) => { setQty03(e); calculateThreeItemsAmount() }}></TextInput>
+                    <TextInput style={styles.input} placeholder="Quantity" value={amount3} keyboardType="numeric" onChangeText={(e) => { setQty03(e); calculateThreeItemsAmount() }}></TextInput>
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ marginTop: 10 }}>
@@ -388,12 +382,12 @@ function placeAnOrder({ navigation }) {
                     <StatusBar style="auto" />
                 </View>
                 <View style={{ alignItems: 'center', marginTop: 20 }}>
-                    <TouchableHighlight onPress={sendData}>
+                    <TouchableHighlight underlayColor="none" onPress={sendData}>
                         <View style={styles.btnSubmit}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Submit</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: "white" }}>Submit</Text>
                         </View>
                     </TouchableHighlight>
-                    <TouchableHighlight onPress={saveAsDraft}>
+                    <TouchableHighlight underlayColor="none" onPress={saveAsDraft}>
                         <View style={styles.btnDraft}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Save as Draft</Text>
                         </View>
@@ -432,7 +426,7 @@ const styles = StyleSheet.create({
     btnSubmit: {
         width: 350,
         height: 50,
-        backgroundColor: '#1FC190',
+        backgroundColor: '#0079b9',
         alignItems: 'center',
         padding: 10,
         borderRadius: 10,
